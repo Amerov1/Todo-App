@@ -1,0 +1,74 @@
+﻿<MudGrid>
+    <MudItem xs="6" Style="margin-top: 12px;">
+        <MudPaper >
+            <MudTextField @bind-Value="NewItem.Name" Label="Title" Variant="Variant.Text"  />
+        </MudPaper>
+    </MudItem>
+    <MudItem xs="6">
+            <MudStack>
+                <MudSelect @bind-Value="NewItem._priority" Label="Priority :" Variant="Variant.Outlined">
+                    <MudSelectItem  Value=Priority.Low>
+                        <MudIcon Icon="@Icons.Material.Filled.Circle" Color="Color.Success" /> Low
+                    </MudSelectItem>
+                    <MudSelectItem Value=Priority.Medium>
+                        <MudIcon Icon="@Icons.Material.Filled.Circle" Color="Color.Warning" />Medium
+                    </MudSelectItem>
+                    <MudSelectItem Value=Priority.High>
+                        <MudIcon Icon="@Icons.Material.Filled.Circle" Color="Color.Error" />High
+                    </MudSelectItem>
+                </MudSelect>
+            </MudStack>
+    </MudItem>
+    <MudItem xs="6">
+        <MudPaper>
+            <MudDatePicker Label="Start Date" Editable="true" @bind-Date="NewItem.StartDate" Mask="@(new DateMask("dd.MM.yyyy"))" DateFormat="dd.MM.yyyy" Placeholder="de-AT Date" />
+        </MudPaper>
+    </MudItem>
+    <MudItem xs="6">
+        <MudPaper >
+            <MudDatePicker Label="DeadLine" Editable="true" @bind-Date="NewItem.DeadLine" Mask="@(new DateMask("dd.MM.yyyy"))" DateFormat="dd.MM.yyyy" Placeholder="de-AT Date" />
+        </MudPaper> 
+    </MudItem> 
+</MudGrid>
+@code {
+    #pragma warning disable CS8618
+    [Parameter]
+    public Item NewItem { get; set; }
+    private string _firstToDo = string.Empty;
+    private Priority _priority;
+    private string _selectedP = "Low";
+    private bool _readOnly =false;
+    private MudBlazor.Color _selectedColor =Color.Success;
+    private void OnItemSelected(Priority p)
+    {
+       NewItem._priority=p;
+        UpdateStatus();
+    }
+    void UpdateStatus()
+    {
+        switch (NewItem._priority)
+        {
+            case Priority.Low:
+                _selectedColor = Color.Success;
+           //     NewItem._priority = Priority.Low;
+                break;
+            case Priority.Medium:
+                _selectedColor = Color.Warning;
+            //    NewItem._priority = Priority.Medium;
+                break;
+            case Priority.High:
+                _selectedColor = Color.Error;
+             //   NewItem._priority = Priority.High;
+                break;
+            default:
+                _selectedColor = Color.Default;
+                break;
+        }
+    }
+    private void OnItemSelectedVarian(Priority p)
+    {
+    //    selectedP = newSelectedValue;
+        UpdateStatus();
+    }
+
+}

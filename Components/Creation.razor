@@ -1,0 +1,39 @@
+﻿@inject IItemService ItemService
+ @inject IDialogService DialogService
+
+<MudDialog>
+
+    <TitleContent >
+        <MudText Color="Color.Dark"> New Item </MudText>
+    </TitleContent>
+    <DialogContent>
+        <DialogInfo NewItem="Item" />
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit">Ok</MudButton>
+    </DialogActions>
+
+</MudDialog>
+@code {
+    #pragma warning disable CS8618
+  //  string TextValue = "New Item";
+    [Parameter]
+    public Item Item { get; set; } 
+
+
+    [CascadingParameter]
+    private MudDialogInstance MudDialog { get; set; }
+
+    private void Submit()
+    {
+        ItemService.add(Item);
+
+        MudDialog.Close(DialogResult.Ok(true));
+        
+    }
+
+    private void Cancel() => MudDialog.Cancel();
+
+}
+     

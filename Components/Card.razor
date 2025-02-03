@@ -1,0 +1,97 @@
+﻿@inject IItemService ItemService
+@inject IDialogService DialogService
+
+	<MudPaper>
+@if (Item.IsDone)
+                    {
+	<MudText>&nbsp;@Item.Name  <MudIcon Icon="@Icons.Material.Filled.Done" Size="Size.Large" Color="Color.Success" /></MudText>
+                    }
+                    else
+                    {
+	<MudText>&nbsp;@Item.Name   <MudIcon Icon="@Icons.Material.Filled.Done" Size="Size.Large" /></MudText>
+
+
+
+
+
+}
+@if (_editMode)
+{
+
+	<DialogInfo NewItem="Item" />
+	<MudTextField @bind-Value="_eingabe" Label="First to do ..." />
+	<MudFab OnClick="Add" Color="Color.Primary" Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Add" Size="Size.Small" />
+	<MudFab OnClick="()=>_editMode=false" StartIcon="@Icons.Material.Filled.EditNote" Size="Size.Small" />
+
+	//To show or hide the small Tasks
+	@if(_showHide)
+	{
+		<MudFab OnClick="()=>_showHide=false" StartIcon="@Icons.Material.Filled.KeyboardArrowDown" Size="Size.Small" Color="Color.Success" />
+		<MudFab OnClick="OpenDialog" StartIcon="@Icons.Material.Filled.Remove" Size="Size.Small" Color="Color.Error" />
+		<MudStack>
+			@foreach (var i in Item.subTodo)
+			{
+				<MudPaper>
+					<MudCheckBox T="bool" Value="@i.IsDone" UncheckedColor="Color.Default" Color="Color.Success" ValueChanged="(b)=>IsAllDone(i,b)" >@i.Content</MudCheckBox>
+
+				</MudPaper>
+			}
+
+		</MudStack>
+
+	}
+	else
+	{
+		<MudFab OnClick="()=>_showHide=true" StartIcon="@Icons.Material.Filled.KeyboardArrowLeft" Size="Size.Small" />
+		<MudFab OnClick="OpenDialog" StartIcon="@Icons.Material.Filled.Remove" Size="Size.Small" Color="Color.Error" />
+	}
+
+}
+else
+{
+	<MudFab OnClick="()=>_editMode=true" StartIcon="@Icons.Material.Filled.EditNote" Size="Size.Small" />
+	<MudFab OnClick="OpenDialog" StartIcon="@Icons.Material.Filled.Remove" Size="Size.Small" Color="Color.Error" />
+
+}
+</MudPaper>
+@code {
+	[Parameter]
+	public Action Child{ get; set; }
+	[Parameter]
+	public Item Item { get; set; }
+	private SubToDo _subItem;
+	private string _eingabe=string.Empty;
+	private bool _showHide;
+	void Remove()
+	{
+		ItemService.delete(Item.Id);
+	}
+	private bool _editMode;
+	//How to call this Method without useing a Button ?
+	public void IsAllDone(SubToDo i,bool b)
+	{
+		i.IsDone = b;
+		Item.IsDone = Item.subTodo.All(x => x.IsDone);
+	}
+	public async Task OpenDialog()
+	{
+		var options = new DialogOptions { CloseOnEscapeKey = true };
+		var dialog=	DialogService.Show<DialogWarning>(null,options);
+		var result = await dialog.Result;
+		if(!result.Canceled)
+		{
+			Remove();
+			await InvokeAsync(Child);
+		}
+
+	}
+	public void Add()
+	{
+		_subItem = new SubToDo();
+		_subItem.Content = _eingabe;
+		Item.subTodo.Add(_subItem);
+		ItemService.update(Item);
+		_eingabe = string.Empty;
+	}
+
+}

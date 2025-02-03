@@ -1,0 +1,53 @@
+﻿@page "/"
+@inject IItemService ItemService
+@inject IDialogService DialogService
+<MudGrid>
+    @if (myItems != null &&myItems.Count != 0)
+        @foreach (var item in myItems)
+        {
+
+            <MudItem Style="margin-left: 12px;">
+
+
+                <Card Item="item" Chiild="()=>OnRefresh()" />
+
+            </MudItem> 
+        } 
+    <MudItem>
+        @* <MudFab OnClick="StateHasChanged" Color="Color.Dark" StartIcon="@Icons.Material.Filled.Add" /> *@
+        <MudFab OnClick="OpenDialog" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" /> 
+    </MudItem>
+
+</MudGrid>
+@code {
+
+    public Item generatedItem { get; set; } 
+    public List<Item> myItems { get; set; }
+    protected override void OnInitialized()
+    {
+        myItems=   ItemService.getItems();
+        base.OnInitialized();
+    }
+    public void OnRefresh()
+    {
+        myItems = ItemService.getItems();
+        StateHasChanged();
+    }
+    private async Task OpenDialog()
+    {
+        generatedItem = new Item();
+        var options = new DialogOptions { CloseOnEscapeKey = true };
+        var parameters = new DialogParameters
+        {
+            { "Item", generatedItem }
+        };
+        var dialog= DialogService.Show<Creation>(null, parameters,options);
+        var result = await dialog.Result;
+
+        if (!result.Canceled)
+        {
+            await InvokeAsync(OnRefresh);
+        }
+    }
+
+}
