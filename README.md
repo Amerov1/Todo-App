@@ -14,10 +14,10 @@ A simple application to track tasks you want to complete.
 ## 📸 Screenshots
 
 ### 🆕 Adding a New Item/Task
-<img src="img/ToDo1.png" alt="Adding New Task" width="800"/>
+<img src="Img/ToDo1.png" alt="Adding New Task" width="800"/>
 
 ### ✏️ Editing an Existing Task
-<img src="img/ToDo2.png" alt="Editing a Task" width="800"/>
+<img src="Img/ToDo2.png" alt="Editing a Task" width="800"/>
 
 ---
 
